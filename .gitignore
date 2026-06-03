@@ -1,0 +1,6 @@
+.DS_Store
+backup/
+.voca_server.log
+.voca_server.pid
+node_modules/
+.vercel/

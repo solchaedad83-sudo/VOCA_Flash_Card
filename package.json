@@ -1,0 +1,8 @@
+{
+  "name": "voca-flash-card",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "check": "node --check api/add-word.js && node --check mobile.js && node --check app.js"
+  }
+}

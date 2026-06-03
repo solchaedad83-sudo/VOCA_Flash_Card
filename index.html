@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anki VOCA - Spaced Repetition Flashcard</title>
+    <!-- Google Fonts: Inter & Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Style Sheet -->
+    <link rel="stylesheet" href="index.css">
+    <!-- Lucide Icons for premium visual experience -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-logo">
+                    <i data-lucide="brain-circuit" class="logo-icon"></i>
+                </div>
+                <div class="brand-info">
+                    <h1>Anki VOCA</h1>
+                    <span>Spaced Repetition</span>
+                </div>
+            </div>
+
+            <nav class="nav-menu">
+                <button class="nav-item active" data-target="dashboard">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>대시보드</span>
+                </button>
+                <button class="nav-item" data-target="study" id="nav-study-btn">
+                    <i data-lucide="play-circle"></i>
+                    <span>카드 학습</span>
+                    <span class="badge due-badge-nav" id="nav-due-count">0</span>
+                </button>
+                <button class="nav-item" data-target="add">
+                    <i data-lucide="plus-circle"></i>
+                    <span>단어 추가</span>
+                </button>
+                <button class="nav-item" data-target="library">
+                    <i data-lucide="book-open"></i>
+                    <span>단어장 관리</span>
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="storage-info">
+                    <div class="storage-title">
+                        <i data-lucide="database"></i>
+                        <span>로컬 데이터 보관처</span>
+                    </div>
+                    <span class="file-path" title="voca.csv">voca.csv</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Panel -->
+        <main class="main-content">
+            <!-- Header Section -->
+            <header class="app-header">
+                <div class="header-title">
+                    <h2 id="view-title">대시보드</h2>
+                    <p id="view-description">오늘의 학습 진행 상황과 암기 현황을 확인하세요.</p>
+                </div>
+                <div class="header-widgets">
+                    <div class="card-status-pill new">
+                        <span class="label">신규 카드</span>
+                        <span class="value" id="header-new-count">0</span>
+                    </div>
+                    <div class="card-status-pill due">
+                        <span class="label">복습 카드</span>
+                        <span class="value" id="header-due-count">0</span>
+                    </div>
+                    <div class="card-status-pill total">
+                        <span class="label">전체 단어</span>
+                        <span class="value" id="header-total-count">0</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Active View Wrapper -->
+            <div class="view-container">
+                
+                <!-- 1. DASHBOARD VIEW -->
+                <section id="dashboard-view" class="view-panel active">
+                    <div class="dashboard-grid">
+                        <!-- Stat Card 1 -->
+                        <div class="stat-card">
+                            <div class="stat-icon due">
+                                <i data-lucide="clock"></i>
+                            </div>
+                            <div class="stat-details">
+                                <h3>오늘 학습할 단어</h3>
+                                <p class="stat-value" id="dash-due-value">0</p>
+                                <span class="stat-subtext">주기적인 복습이 기억을 돕습니다</span>
+                            </div>
+                        </div>
+
+                        <!-- Stat Card 2 -->
+                        <div class="stat-card">
+                            <div class="stat-icon new">
+                                <i data-lucide="sparkles"></i>
+                            </div>
+                            <div class="stat-details">
+                                <h3>새로 추가된 단어</h3>
+                                <p class="stat-value" id="dash-new-value">0</p>
+                                <span class="stat-subtext">학습하지 않은 신규 어휘수</span>
+                            </div>
+                        </div>
+
+                        <!-- Stat Card 3 -->
+                        <div class="stat-card">
+                            <div class="stat-icon learned">
+                                <i data-lucide="check-circle2"></i>
+                            </div>
+                            <div class="stat-details">
+                                <h3>마스터한 단어</h3>
+                                <p class="stat-value" id="dash-mastered-value">0</p>
+                                <span class="stat-subtext">복습 간격이 21일 이상인 단어</span>
+                            </div>
+                        </div>
+
+                        <!-- Stat Card 4 -->
+                        <div class="stat-card">
+                            <div class="stat-icon progress-icon">
+                                <i data-lucide="trending-up"></i>
+                            </div>
+                            <div class="stat-details">
+                                <h3>전체 학습률</h3>
+                                <p class="stat-value" id="dash-rate-value">0%</p>
+                                <span class="stat-subtext">1회 이상 학습 완료된 단어 비율</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-layout">
+                        <!-- Main Stats Column -->
+                        <div class="dashboard-card progress-card">
+                            <div class="card-header">
+                                <h3>학습 통계 요약</h3>
+                                <i data-lucide="pie-chart" class="card-icon-header"></i>
+                            </div>
+                            <div class="progress-details-container">
+                                <div class="circular-progress-wrapper">
+                                    <svg class="progress-ring" width="160" height="160">
+                                        <circle class="progress-ring-bg" stroke="rgba(255,255,255,0.06)" stroke-width="12" fill="transparent" r="70" cx="80" cy="80"/>
+                                        <circle class="progress-ring-bar" id="circular-progress-bar" stroke="url(#progressGradient)" stroke-width="12" stroke-linecap="round" fill="transparent" r="70" cx="80" cy="80" stroke-dasharray="439.8" stroke-dashoffset="439.8"/>
+                                        <defs>
+                                            <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                                <stop offset="0%" stop-color="#a855f7" />
+                                                <stop offset="100%" stop-color="#06b6d4" />
+                                            </linearGradient>
+                                        </defs>
+                                    </svg>
+                                    <div class="progress-text">
+                                        <span class="percentage" id="dash-circular-percent">0%</span>
+                                        <span class="label">학습 진행도</span>
+                                    </div>
+                                </div>
+                                <div class="progress-legend">
+                                    <div class="legend-item">
+                                        <span class="bullet new"></span>
+                                        <span class="legend-label">미학습 카드 (New)</span>
+                                        <span class="legend-val" id="legend-new-val">0개</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <span class="bullet learning"></span>
+                                        <span class="legend-label">학습 중인 카드 (Learning)</span>
+                                        <span class="legend-val" id="legend-learning-val">0개</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <span class="bullet mastered"></span>
+                                        <span class="legend-label">장기 기억 카드 (Mastered)</span>
+                                        <span class="legend-val" id="legend-mastered-val">0개</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Motivation and Quick Study Card -->
+                        <div class="dashboard-card action-card">
+                            <div class="card-header">
+                                <h3>오늘의 동기부여</h3>
+                                <i data-lucide="award" class="card-icon-header"></i>
+                            </div>
+                            <div class="action-card-content">
+                                <div class="quote-box">
+                                    <p class="quote-text">"The limits of my language mean the limits of my world."</p>
+                                    <p class="quote-author">- Ludwig Wittgenstein</p>
+                                </div>
+                                <div class="quick-study-action">
+                                    <p class="action-desc">오늘 검토해야 할 뇌 과학 기반 복습 카드가 대기하고 있습니다.</p>
+                                    <button class="btn btn-primary" id="dash-start-study-btn">
+                                        <i data-lucide="play"></i>
+                                        <span>지금 학습 시작하기</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2. STUDY VIEW -->
+                <section id="study-view" class="view-panel">
+                    <div class="study-settings">
+                        <label>
+                            신규 카드
+                            <input type="number" id="new-limit-input" min="0" max="999" value="20">
+                        </label>
+                        <label>
+                            복습 카드
+                            <input type="number" id="review-limit-input" min="0" max="999" value="50">
+                        </label>
+                    </div>
+
+                    <!-- Cards Left Counter -->
+                    <div class="study-progress-bar-container">
+                        <div class="study-progress-info">
+                            <span id="study-remaining-text">남은 카드: 0장</span>
+                            <span id="study-session-percent">0%</span>
+                        </div>
+                        <div class="study-progress-bar-track">
+                            <div class="study-progress-bar-fill" id="study-progress-fill" style="width: 0%;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Flashcard 3D Perspective Area -->
+                    <div class="flashcard-container" id="flashcard-container">
+                        <div class="flashcard" id="flashcard-element">
+                            <div class="card-inner">
+                                <!-- Card Front Side -->
+                                <div class="card-front">
+                                    <div class="card-header-badge">English Vocabulary</div>
+                                    <div class="card-word-content">
+                                        <h2 id="card-front-word">serendipity</h2>
+                                        <div class="word-tools">
+                                            <button class="speech-btn" id="tts-btn" title="발음 듣기">
+                                                <i data-lucide="volume-2"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="click-hint">
+                                        <i data-lucide="help-circle"></i>
+                                        <span>카드를 클릭하거나 스페이스바를 눌러 뜻을 확인하세요</span>
+                                    </div>
+                                </div>
+                                <!-- Card Back Side -->
+                                <div class="card-back">
+                                    <div class="card-header-badge back">Korean Meaning</div>
+                                    
+                                    <div class="card-meaning-content">
+                                        <h3 id="card-back-meaning">뜻밖의 발견, 우연한 행운</h3>
+                                    </div>
+
+                                    <hr class="card-divider">
+
+                                    <div class="card-example-content" id="card-example-container">
+                                        <div class="example-item">
+                                            <span class="example-label">예문</span>
+                                            <p class="example-en" id="card-back-example-en">We found the charming little bookstore by pure serendipity.</p>
+                                            <p class="example-ko" id="card-back-example-ko">우리는 순전히 뜻밖의 행운으로 그 매력적이고 작은 서점을 발견했다.</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="click-hint-back">
+                                        <span>아래 등급을 선택해 다음 복습 주기를 결정하세요.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Flip trigger button (visible when on front) -->
+                    <div class="card-control-actions" id="front-actions">
+                        <button class="btn btn-secondary btn-large" id="reveal-btn">
+                            <i data-lucide="eye"></i>
+                            <span>정답 확인하기 (Space)</span>
+                        </button>
+                    </div>
+
+                    <!-- Rating controls (visible when on back) -->
+                    <div class="card-rating-actions" id="back-actions" style="display: none;">
+                        <button class="rating-btn again" data-grade="1">
+                            <span class="rating-label">다시 하기</span>
+                            <span class="rating-time" id="time-again">&lt;1분</span>
+                        </button>
+                        <button class="rating-btn hard" data-grade="2">
+                            <span class="rating-label">어려움</span>
+                            <span class="rating-time" id="time-hard">1일</span>
+                        </button>
+                        <button class="rating-btn good" data-grade="3">
+                            <span class="rating-label">알맞음</span>
+                            <span class="rating-time" id="time-good">3일</span>
+                        </button>
+                        <button class="rating-btn easy" data-grade="4">
+                            <span class="rating-label">쉬움</span>
+                            <span class="rating-time" id="time-easy">6일</span>
+                        </button>
+                    </div>
+
+                    <!-- Empty State View -->
+                    <div class="empty-study-state" id="empty-study-state" style="display: none;">
+                        <div class="success-glow">
+                            <i data-lucide="check-circle2"></i>
+                        </div>
+                        <h2>오늘의 복습 완료!</h2>
+                        <p>훌륭합니다! 오늘의 모든 스페이싱 카드를 학습하셨습니다.<br>더 공부하고 싶다면 단어를 추가하거나 단어장에서 개별 복습할 수 있습니다.</p>
+                        <button class="btn btn-primary" id="go-dashboard-btn">
+                            <i data-lucide="home"></i>
+                            <span>대시보드로 돌아가기</span>
+                        </button>
+                    </div>
+                </section>
+
+                <!-- 3. ADD WORD VIEW -->
+                <section id="add-view" class="view-panel">
+                    <div class="form-container">
+                        <div class="form-card csv-import-card">
+                            <div class="form-card-header">
+                                <i data-lucide="file-up" class="form-icon"></i>
+                                <h3>CSV로 학습 정보 불러오기</h3>
+                                <p>같은 포맷의 voca.csv를 선택하면 단어와 복습 상태를 한 번에 업데이트합니다.</p>
+                            </div>
+
+                            <form id="csv-import-form">
+                                <label class="csv-file-picker" for="csv-file-input">
+                                    <i data-lucide="upload-cloud"></i>
+                                    <span>voca.csv 파일 선택</span>
+                                    <input type="file" id="csv-file-input" accept=".csv,text/csv">
+                                </label>
+
+                                <a class="btn btn-secondary btn-large btn-block" href="/api/template-csv" download="voca_template.csv">
+                                    <i data-lucide="download"></i>
+                                    <span>CSV 템플릿 다운로드</span>
+                                </a>
+
+                                <button type="submit" class="btn btn-primary btn-large btn-block" id="import-csv-btn">
+                                    <i data-lucide="refresh-cw"></i>
+                                    <span>CSV 불러오기</span>
+                                </button>
+                            </form>
+                        </div>
+
+                        <div class="form-card">
+                            <div class="form-card-header">
+                                <i data-lucide="sparkles" class="form-icon"></i>
+                                <h3>새 단어 등록</h3>
+                                <p>단어와 뜻을 입력하면 `voca.csv` 파일에 실시간 저장되어 학습에 포함됩니다.</p>
+                            </div>
+                            
+                            <form id="add-word-form" novalidate>
+                                <div class="form-group">
+                                    <label for="input-word">영어 단어/표현 <span class="required">*</span></label>
+                                    <div class="input-wrapper">
+                                        <i data-lucide="type" class="input-icon"></i>
+                                        <input type="text" id="input-word" placeholder="예: meticulous" required autocomplete="off">
+                                    </div>
+                                    <span class="validation-message" id="word-validation">단어를 입력해주세요.</span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="input-meaning">한글 뜻 <span class="required">*</span></label>
+                                    <div class="input-wrapper">
+                                        <i data-lucide="languages" class="input-icon"></i>
+                                        <input type="text" id="input-meaning" placeholder="예: 꼼꼼한, 세심한" required autocomplete="off">
+                                    </div>
+                                    <span class="validation-message" id="meaning-validation">뜻을 입력해주세요.</span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="input-example-en">영어 예문 (선택)</label>
+                                    <div class="input-wrapper">
+                                        <i data-lucide="text" class="input-icon"></i>
+                                        <input type="text" id="input-example-en" placeholder="예: The researcher kept meticulous records of the experiments." autocomplete="off">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="input-example-ko">예문 해석 (선택)</label>
+                                    <div class="input-wrapper">
+                                        <i data-lucide="heading" class="input-icon"></i>
+                                        <input type="text" id="input-example-ko" placeholder="예: 그 연구원은 실험에 대한 꼼꼼한 기록을 남겼다." autocomplete="off">
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary btn-large btn-block" id="submit-word-btn">
+                                    <i data-lucide="save"></i>
+                                    <span>단어장에 저장하기</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 4. LIBRARY VIEW -->
+                <section id="library-view" class="view-panel">
+                    <div class="library-controls-card">
+                        <div class="search-filter-bar">
+                            <div class="search-box">
+                                <i data-lucide="search"></i>
+                                <input type="text" id="library-search-input" placeholder="어휘 또는 뜻 검색...">
+                            </div>
+                            <div class="filter-group">
+                                <span class="filter-label">필터:</span>
+                                <button class="filter-btn active" data-filter="all">전체</button>
+                                <button class="filter-btn" data-filter="new">미학습</button>
+                                <button class="filter-btn" data-filter="learning">학습중</button>
+                                <button class="filter-btn" data-filter="mastered">장기기억</button>
+                                <button class="filter-btn" data-filter="due">복습대상</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Library Table Container -->
+                    <div class="table-container">
+                        <table class="vocab-table">
+                            <thead>
+                                <tr>
+                                    <th>단어</th>
+                                    <th>한글 뜻</th>
+                                    <th>학습 상태</th>
+                                    <th>복습 주기</th>
+                                    <th>이즈 팩터</th>
+                                    <th>다음 복습일</th>
+                                    <th>작업</th>
+                                </tr>
+                            </thead>
+                            <tbody id="library-table-body">
+                                <!-- Dynamic rows go here -->
+                            </tbody>
+                        </table>
+                        
+                        <!-- Empty State for Library -->
+                        <div class="empty-library-state" id="empty-library-state" style="display: none;">
+                            <i data-lucide="folder-open"></i>
+                            <h3>조건에 일치하는 단어가 없습니다</h3>
+                            <p>검색어를 변경하거나 새로운 단어를 등록해보세요.</p>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Notification Toast Element -->
+    <div id="toast" class="toast">
+        <i data-lucide="info" class="toast-icon" id="toast-icon"></i>
+        <span class="toast-message" id="toast-message">알림 메시지</span>
+    </div>
+
+    <div class="modal-backdrop" id="edit-word-modal">
+        <div class="modal-panel">
+            <div class="modal-header">
+                <h3>단어 수정</h3>
+                <button class="icon-button" id="edit-cancel-btn" type="button" title="닫기">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <form id="edit-word-form">
+                <input type="hidden" id="edit-original-word">
+                <div class="form-group">
+                    <label for="edit-word">영어 단어/표현</label>
+                    <input type="text" id="edit-word" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-meaning">한글 뜻</label>
+                    <input type="text" id="edit-meaning" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-example-en">영어 예문</label>
+                    <input type="text" id="edit-example-en">
+                </div>
+                <div class="form-group">
+                    <label for="edit-example-ko">예문 해석</label>
+                    <input type="text" id="edit-example-ko">
+                </div>
+                <div class="modal-grid">
+                    <div class="form-group">
+                        <label for="edit-interval">복습 주기</label>
+                        <input type="number" id="edit-interval" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-ease-factor">이즈 팩터</label>
+                        <input type="number" id="edit-ease-factor" min="1.3" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-repetitions">반복 횟수</label>
+                        <input type="number" id="edit-repetitions" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-due-date">다음 복습일</label>
+                        <input type="date" id="edit-due-date">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-large btn-block">
+                    <i data-lucide="save"></i>
+                    <span>수정 저장</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Application Script -->
+    <script src="app.js"></script>
+</body>
+</html>
