@@ -5,3 +5,11 @@ backup/
 .voca_cloud_url
 node_modules/
 .vercel/
+
+# Local-only flashcard app and vocabulary data
+VOCA 실행.command
+app.js
+index.css
+index.html
+server.py
+voca.csv
