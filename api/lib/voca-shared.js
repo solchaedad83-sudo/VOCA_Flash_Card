@@ -104,14 +104,23 @@ async function sheetsFetch(path, options = {}) {
 }
 
 async function getSheetRows() {
+  return (await getSheetRowsWithRowNumbers()).map(({ row }) => row);
+}
+
+async function getSheetRowsWithRowNumbers() {
   const config = googleConfig();
   const range = encodeURIComponent(`${config.sheetName}!A:I`);
   const data = await sheetsFetch(`/values/${range}`);
   const values = data.values || [];
-  const bodyRows = values.length && values[0][0] === "word" ? values.slice(1) : values;
+  const hasHeader = values.length && values[0][0] === "word";
+  const bodyRows = hasHeader ? values.slice(1) : values;
+  const offset = hasHeader ? 2 : 1;
   return bodyRows
-    .filter((row) => row.some((cell) => String(cell || "").trim() !== ""))
-    .map((row) => Object.fromEntries(CSV_HEADER.map((key, index) => [key, row[index] ?? ""])));
+    .map((values, index) => ({
+      rowNumber: index + offset,
+      row: Object.fromEntries(CSV_HEADER.map((key, columnIndex) => [key, values[columnIndex] ?? ""])),
+    }))
+    .filter(({ row }) => Object.values(row).some((cell) => String(cell || "").trim() !== ""));
 }
 
 async function appendSheetRow(row) {
@@ -122,6 +131,26 @@ async function appendSheetRow(row) {
     body: JSON.stringify({
       values: [CSV_HEADER.map((key) => row[key] ?? "")],
     }),
+  });
+}
+
+async function updateSheetRow(rowNumber, row) {
+  const config = googleConfig();
+  const range = encodeURIComponent(`${config.sheetName}!A${rowNumber}:I${rowNumber}`);
+  await sheetsFetch(`/values/${range}?valueInputOption=USER_ENTERED`, {
+    method: "PUT",
+    body: JSON.stringify({
+      values: [CSV_HEADER.map((key) => row[key] ?? "")],
+    }),
+  });
+}
+
+async function clearSheetRow(rowNumber) {
+  const config = googleConfig();
+  const range = encodeURIComponent(`${config.sheetName}!A${rowNumber}:I${rowNumber}`);
+  await sheetsFetch(`/values/${range}:clear`, {
+    method: "POST",
+    body: JSON.stringify({}),
   });
 }
 
@@ -197,7 +226,10 @@ module.exports = {
   CSV_HEADER,
   appendSheetRow,
   buildCsv,
+  clearSheetRow,
   createCardWithAI,
   getSheetRows,
+  getSheetRowsWithRowNumbers,
   sendJson,
+  updateSheetRow,
 };

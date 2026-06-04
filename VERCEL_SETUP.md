@@ -47,9 +47,10 @@ EXPORT_CSV_SECRET=your-private-password
 
 If `ADD_WORD_SECRET` is set, enter the same password in the mobile web app before saving.
 
-## Local Mac Sync
+## Local Mac Flashcard App
 
-The local flashcard app can sync `voca.csv` from Google Sheets through the Vercel export API before it starts.
+The local flashcard app can read and update Google Sheets through the Vercel cloud API.
+`voca.csv` no longer needs to be used as the local data source.
 
 Create a local file named `.voca_cloud_url` in this project folder:
 
@@ -63,7 +64,8 @@ If you set `EXPORT_CSV_SECRET` or `ADD_WORD_SECRET`, include it as a query strin
 https://voca-flash-card.vercel.app/api/export-csv?secret=your-private-password
 ```
 
-Then run `VOCA 실행.command`. It will download the latest cloud CSV into local `voca.csv` before starting the study app.
+The local Python server converts this URL to `/api/cloud-words` internally.
+Then run `VOCA 실행.command`. The app will read the latest Google Sheets rows through Vercel and send review updates back to Google Sheets.
 
 ## Data Flow
 
@@ -72,6 +74,6 @@ iPhone Vercel app
 -> English word input
 -> OpenAI fills meaning/example fields
 -> Google Sheets row append
--> Local Mac app downloads /api/export-csv on startup
--> Local voca.csv updates automatically
+-> Local Mac app reads /api/cloud-words
+-> Review progress updates Google Sheets
 ```
