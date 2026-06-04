@@ -3,6 +3,6 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "check": "node --check api/add-word.js && node --check mobile.js && node --check app.js"
+    "check": "node --check api/lib/voca-shared.js && node --check api/add-word.js && node --check api/export-csv.js && node --check mobile.js && node --check app.js"
   }
 }

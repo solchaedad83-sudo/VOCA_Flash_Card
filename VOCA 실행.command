@@ -16,6 +16,7 @@ except Exception:
 PY
 )"
 MOBILE_URL="http://${LAN_IP}:${PORT}/mobile.html"
+CLOUD_CONFIG=".voca_cloud_url"
 
 if ! command -v python3 >/dev/null 2>&1; then
   echo "python3를 찾을 수 없습니다. Python 3를 설치한 뒤 다시 실행해주세요."
@@ -35,6 +36,21 @@ echo "브라우저 주소: ${URL}"
 echo "아이폰 주소: ${MOBILE_URL}"
 echo "이 창을 닫거나 Control+C를 누르면 서버가 종료됩니다."
 echo
+
+if [ -f "${CLOUD_CONFIG}" ]; then
+  CLOUD_CSV_URL="$(cat "${CLOUD_CONFIG}")"
+  if [ -n "${CLOUD_CSV_URL}" ]; then
+    echo "클라우드 voca.csv 동기화 중..."
+    if curl -fsSL "${CLOUD_CSV_URL}" -o "voca.csv.tmp"; then
+      mv "voca.csv.tmp" "voca.csv"
+      echo "클라우드 voca.csv 동기화 완료."
+    else
+      rm -f "voca.csv.tmp"
+      echo "클라우드 동기화 실패. 기존 voca.csv로 실행합니다."
+    fi
+    echo
+  fi
+fi
 
 ( sleep 1; open "${URL}" ) &
 python3 server.py

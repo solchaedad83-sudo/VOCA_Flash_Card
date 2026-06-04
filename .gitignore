@@ -2,5 +2,6 @@
 backup/
 .voca_server.log
 .voca_server.pid
+.voca_cloud_url
 node_modules/
 .vercel/
