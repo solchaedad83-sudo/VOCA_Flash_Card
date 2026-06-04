@@ -9,31 +9,26 @@
 <body>
     <main class="mobile-shell">
         <header class="mobile-header">
-            <p class="eyebrow">Anki VOCA</p>
-            <h1>AI Quick Add</h1>
-            <p class="subtitle">영어 단어만 입력하면 AI가 뜻과 예문을 채우고 GitHub의 voca.csv를 업데이트합니다.</p>
+            <p class="eyebrow">VOCA</p>
+            <h1>단어 추가</h1>
+            <p class="subtitle">영어 단어 하나만 입력하세요.</p>
         </header>
 
         <section class="status-card">
             <span class="status-dot" id="status-dot"></span>
             <div>
-                <strong id="status-title">서버 확인 중</strong>
-                <p id="status-detail">Vercel API 연결을 확인합니다.</p>
+                <strong id="status-title">준비 중</strong>
+                <p id="status-detail">저장 준비 상태를 확인합니다.</p>
             </div>
         </section>
 
         <form id="quick-add-form" class="quick-form">
             <label>
-                <span>영어 단어/표현</span>
-                <input id="word-input" type="text" autocomplete="off" autocapitalize="none" placeholder="serendipity" required>
+                <span>영어 단어</span>
+                <input id="word-input" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="serendipity" required>
             </label>
 
-            <label id="secret-field" class="secret-field">
-                <span>저장 비밀번호</span>
-                <input id="secret-input" type="password" autocomplete="current-password" placeholder="선택 설정">
-            </label>
-
-            <button id="save-btn" type="submit">AI로 생성하고 저장</button>
+            <button id="save-btn" type="submit">저장</button>
         </form>
 
         <section class="recent-card">

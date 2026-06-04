@@ -11,12 +11,6 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  const configuredSecret = process.env.ADD_WORD_SECRET;
-  if (configuredSecret && req.headers["x-add-word-secret"] !== configuredSecret) {
-    sendJson(res, 401, { error: "Invalid add-word secret." });
-    return;
-  }
-
   try {
     const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {};
     const word = String(body.word || "").trim();

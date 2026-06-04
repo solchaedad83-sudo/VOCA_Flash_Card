@@ -20,7 +20,7 @@ function normalizeRow(row) {
 }
 
 function hasAccess(req) {
-  const configuredSecret = process.env.CLOUD_WORDS_SECRET || process.env.EXPORT_CSV_SECRET || process.env.ADD_WORD_SECRET;
+  const configuredSecret = process.env.CLOUD_WORDS_SECRET || process.env.EXPORT_CSV_SECRET;
   if (!configuredSecret) return true;
   return req.headers["x-cloud-words-secret"] === configuredSecret || req.query?.secret === configuredSecret;
 }

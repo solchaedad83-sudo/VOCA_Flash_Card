@@ -190,7 +190,7 @@ async function createCardWithAI(word) {
         },
         {
           role: "user",
-          content: `Create a voca.csv flashcard for this English word or phrase: ${word}`,
+          content: `Create a vocabulary flashcard for this English word or phrase: ${word}`,
         },
       ],
       text: {

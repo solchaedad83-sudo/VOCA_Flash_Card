@@ -41,11 +41,9 @@ Optional:
 
 ```text
 OPENAI_MODEL=gpt-5.4-mini
-ADD_WORD_SECRET=your-private-password
 EXPORT_CSV_SECRET=your-private-password
+CLOUD_WORDS_SECRET=your-private-password
 ```
-
-If `ADD_WORD_SECRET` is set, enter the same password in the mobile web app before saving.
 
 ## Local Mac Flashcard App
 
@@ -58,7 +56,7 @@ Create a local file named `.voca_cloud_url` in this project folder:
 https://voca-flash-card.vercel.app/api/export-csv
 ```
 
-If you set `EXPORT_CSV_SECRET` or `ADD_WORD_SECRET`, include it as a query string:
+If you set `EXPORT_CSV_SECRET`, include it as a query string:
 
 ```text
 https://voca-flash-card.vercel.app/api/export-csv?secret=your-private-password

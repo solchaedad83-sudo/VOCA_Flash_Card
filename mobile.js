@@ -49,12 +49,12 @@ async function checkServer() {
         const res = await fetch('/api/add-word', { method: 'OPTIONS' });
         if (res.status !== 405 && !res.ok) throw new Error('server unavailable');
         statusDot.className = 'status-dot ok';
-        statusTitle.textContent = 'Vercel 앱 준비됨';
-        statusDetail.textContent = '영어 단어를 입력하면 AI가 voca.csv 형식으로 저장합니다.';
+        statusTitle.textContent = '저장 가능';
+        statusDetail.textContent = '단어를 입력하고 저장을 누르세요.';
     } catch (err) {
         statusDot.className = 'status-dot error';
-        statusTitle.textContent = 'API 연결 실패';
-        statusDetail.textContent = 'Vercel 배포와 환경변수 설정을 확인하세요.';
+        statusTitle.textContent = '연결 실패';
+        statusDetail.textContent = '잠시 뒤 다시 시도하세요.';
     }
 }
 
@@ -62,23 +62,18 @@ form.addEventListener('submit', async (event) => {
     event.preventDefault();
 
     const word = document.getElementById('word-input').value.trim();
-    const secret = document.getElementById('secret-input').value.trim();
-
     if (!word) {
         showToast('영어 단어를 입력해주세요.');
         return;
     }
 
     saveBtn.disabled = true;
-    saveBtn.textContent = 'AI가 채우는 중...';
+    saveBtn.textContent = '저장 중...';
 
     try {
-        const headers = { 'Content-Type': 'application/json' };
-        if (secret) headers['x-add-word-secret'] = secret;
-
         const res = await fetch('/api/add-word', {
             method: 'POST',
-            headers,
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ word }),
         });
         const data = await res.json();
@@ -87,12 +82,12 @@ form.addEventListener('submit', async (event) => {
         addRecent(data.word);
         form.reset();
         document.getElementById('word-input').focus();
-        showToast('AI가 채운 단어를 voca.csv에 저장했습니다.');
+        showToast('저장했습니다.');
     } catch (err) {
         showToast(err.message);
     } finally {
         saveBtn.disabled = false;
-        saveBtn.textContent = 'AI로 생성하고 저장';
+        saveBtn.textContent = '저장';
     }
 });
 

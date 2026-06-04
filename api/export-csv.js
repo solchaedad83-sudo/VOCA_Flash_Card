@@ -8,7 +8,7 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  const configuredSecret = process.env.EXPORT_CSV_SECRET || process.env.ADD_WORD_SECRET;
+  const configuredSecret = process.env.EXPORT_CSV_SECRET;
   if (configuredSecret && req.headers["x-export-csv-secret"] !== configuredSecret && req.query?.secret !== configuredSecret) {
     res.statusCode = 401;
     res.setHeader("Content-Type", "application/json; charset=utf-8");
