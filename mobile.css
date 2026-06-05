@@ -33,6 +33,24 @@ body {
     padding: 18px 2px 20px;
 }
 
+.mobile-topbar {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.study-link {
+    flex: 0 0 auto;
+    padding: 9px 12px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--panel);
+    color: var(--accent);
+    font-weight: 800;
+    text-decoration: none;
+}
+
 .eyebrow {
     margin: 0 0 8px;
     color: var(--accent);

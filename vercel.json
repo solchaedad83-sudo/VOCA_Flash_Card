@@ -1,8 +1,16 @@
 {
   "routes": [
     {
-      "src": "/",
+      "src": "/add",
       "dest": "/mobile.html"
+    },
+    {
+      "src": "/study",
+      "dest": "/study.html"
+    },
+    {
+      "src": "/",
+      "dest": "/study.html"
     }
   ]
 }

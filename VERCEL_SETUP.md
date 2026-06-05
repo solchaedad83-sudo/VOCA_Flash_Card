@@ -1,7 +1,7 @@
 # Vercel + Google Sheets Setup
 
-This app lets you open the Vercel URL from iPhone, enter only an English word,
-and save an AI-filled vocabulary row directly into Google Sheets.
+This app lets you study flashcards from iPhone or iPad, enter new English words,
+and save AI-filled vocabulary rows directly into Google Sheets.
 
 Google Sheets becomes the source of truth for vocabulary data. GitHub is only for app code.
 
@@ -42,7 +42,14 @@ Optional:
 ```text
 OPENAI_MODEL=gpt-5.4-mini
 EXPORT_CSV_SECRET=your-private-password
-CLOUD_WORDS_SECRET=your-private-password
+```
+
+App routes:
+
+```text
+/study  Flashcard study
+/add    Quick word add
+/       Flashcard study
 ```
 
 ## Local Mac Flashcard App

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>VOCA Study</title>
+    <link rel="stylesheet" href="study.css">
+</head>
+<body>
+    <main class="study-shell">
+        <header class="topbar">
+            <div>
+                <p class="eyebrow">VOCA</p>
+                <h1>카드 학습</h1>
+            </div>
+            <a class="add-link" href="/add">단어 추가</a>
+        </header>
+
+        <section class="summary-strip" aria-label="학습 요약">
+            <div>
+                <span>오늘</span>
+                <strong id="due-count">0</strong>
+            </div>
+            <div>
+                <span>신규</span>
+                <strong id="new-count">0</strong>
+            </div>
+            <div>
+                <span>전체</span>
+                <strong id="total-count">0</strong>
+            </div>
+        </section>
+
+        <section class="progress-area" aria-label="세션 진행률">
+            <div class="progress-meta">
+                <span id="session-label">학습 준비 중</span>
+                <span id="progress-count">0 / 0</span>
+            </div>
+            <div class="progress-track">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </section>
+
+        <section class="card-stage" id="card-stage">
+            <article class="study-card" id="study-card">
+                <div class="card-face front">
+                    <p class="card-kicker" id="card-kicker">영어 단어</p>
+                    <h2 id="card-word">불러오는 중</h2>
+                    <button class="sound-btn" id="sound-btn" type="button" aria-label="발음 듣기">듣기</button>
+                </div>
+                <div class="card-face back" id="answer-panel" hidden>
+                    <p class="meaning" id="card-meaning"></p>
+                    <p class="example" id="card-example"></p>
+                    <p class="translation" id="card-translation"></p>
+                </div>
+            </article>
+        </section>
+
+        <section class="empty-state" id="empty-state" hidden>
+            <h2>오늘 학습할 카드가 없습니다</h2>
+            <p>새 단어를 추가하거나 내일 다시 복습하세요.</p>
+            <a class="primary-link" href="/add">단어 추가하기</a>
+        </section>
+
+        <section class="actions">
+            <button class="primary-btn" id="reveal-btn" type="button">정답 확인</button>
+            <div class="rating-grid" id="rating-grid" hidden>
+                <button class="rating-btn again" data-grade="1" type="button">
+                    <span>다시</span>
+                    <small id="again-time">오늘</small>
+                </button>
+                <button class="rating-btn hard" data-grade="2" type="button">
+                    <span>어려움</span>
+                    <small id="hard-time">1일</small>
+                </button>
+                <button class="rating-btn good" data-grade="3" type="button">
+                    <span>알맞음</span>
+                    <small id="good-time">3일</small>
+                </button>
+                <button class="rating-btn easy" data-grade="4" type="button">
+                    <span>쉬움</span>
+                    <small id="easy-time">6일</small>
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <div class="toast" id="toast"></div>
+    <script src="study.js"></script>
+</body>
+</html>

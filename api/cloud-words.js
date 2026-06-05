@@ -19,23 +19,12 @@ function normalizeRow(row) {
   };
 }
 
-function hasAccess(req) {
-  const configuredSecret = process.env.CLOUD_WORDS_SECRET || process.env.EXPORT_CSV_SECRET;
-  if (!configuredSecret) return true;
-  return req.headers["x-cloud-words-secret"] === configuredSecret || req.query?.secret === configuredSecret;
-}
-
 function findWord(rows, word) {
   const target = String(word || "").trim().toLowerCase();
   return rows.find(({ row }) => String(row.word || "").trim().toLowerCase() === target);
 }
 
 module.exports = async function handler(req, res) {
-  if (!hasAccess(req)) {
-    sendJson(res, 401, { error: "Invalid cloud words secret." });
-    return;
-  }
-
   try {
     if (req.method === "GET") {
       const rows = await getSheetRowsWithRowNumbers();
